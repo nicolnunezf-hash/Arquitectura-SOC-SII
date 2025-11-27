@@ -1,37 +1,66 @@
 # Arquitectura-SOC-SII
-```mermaid
 graph TD
-    %% Estilos
-    classDef protect fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef detect fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
-    classDef siem fill:#e8f5e9,stroke:#2e7d32,stroke-width:4px;
-    classDef soar fill:#fce4ec,stroke:#880e4f,stroke-width:2px;
-    classDef monitor fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
-
-    subgraph Perimetro ["🛡️ 1. Perímetro y Acceso"]
-        WAF[("Azure WAF + DDoS")]:::protect
-        AAD[("Azure AD + MFA")]:::protect
+    %% Nodos Principales
+    Internet((INTERNET))
+    
+    subgraph Perimetro [Perímetro y Red]
+        DDoS[Azure DDoS + NSG]
+        WAF[Azure WAF]
+        IDS[Security Onion<br/>Suricata + Zeek]
+    end
+    
+    subgraph Activos [Activos Protegidos]
+        Portal[Portal SII]
+        Servers[Servidores Internos]
+    end
+    
+    subgraph Sensores [Agentes y Sensores]
+        Monitor[Azure Monitor]
+        EDR[Microsoft Defender<br/>Endpoint]
     end
 
-    subgraph Deteccion ["👁️ 2. Sensores"]
-        EDR[("Microsoft Defender")]:::detect
-        NDR[("Security Onion")]:::detect
-        MON[("Azure Monitor")]:::monitor
+    subgraph Core [Núcleo SOC]
+        Logs[Log Analytics Workspace]
+        SIEM[MICROSOFT SENTINEL]
     end
 
-    subgraph SIEM ["🧠 3. Cerebro"]
-        Sentinel[("Microsoft Sentinel")]:::siem
+    subgraph Respuesta [SOAR y Gestión]
+        Auto[Sentinel Automation]
+        Hive[TheHive<br/>Ticketing]
     end
 
-    subgraph SOAR ["⚡ 4. Respuesta"]
-        Auto[("Sentinel Automation")]:::soar
-        Hive[("TheHive")]:::soar
-    end
+    Team[Equipo SOC]
 
-    %% Conexiones
-    WAF & AAD --> Sentinel
-    EDR & NDR & MON --> Sentinel
-    Sentinel --> Auto
-    Sentinel --> Hive
-    Auto -.->|Enriquece| Hive
-```
+    %% Relaciones (Flujo Vertical)
+    Internet --> DDoS
+    DDoS --> WAF
+    DDoS --> IDS
+    
+    WAF --> Portal
+    IDS --> Servers
+    
+    Portal --> Monitor
+    Servers --> EDR
+    
+    Monitor --> Logs
+    EDR --> Logs
+    IDS --> Logs
+    WAF --> Logs
+    
+    Logs --> SIEM
+    SIEM --> Auto
+    SIEM --> Hive
+    
+    Auto --> Team
+    Hive --> Team
+    
+    %% Estilos para que se vea profesional
+    classDef blue fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    classDef yellow fill:#fffde7,stroke:#fbc02d,stroke-width:2px;
+    classDef green fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef red fill:#ffebee,stroke:#c62828,stroke-width:2px;
+    
+    class Internet,DDoS,WAF,IDS blue
+    class Portal,Servers yellow
+    class Monitor,EDR,Logs,SIEM green
+    class Auto,Hive,Team red
