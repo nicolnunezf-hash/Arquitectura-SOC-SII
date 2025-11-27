@@ -1,5 +1,6 @@
 # Arquitectura-SOC-SII
 
+```mermaid
 graph TD
     %% Nodos Principales
     Internet((INTERNET))
@@ -32,7 +33,7 @@ graph TD
 
     Team[Equipo SOC]
 
-    %% Relaciones (Flujo Vertical)
+    %% Relaciones
     Internet --> DDoS
     DDoS --> WAF
     DDoS --> IDS
@@ -55,7 +56,7 @@ graph TD
     Auto --> Team
     Hive --> Team
     
-    %% Estilos para que se vea profesional
+    %% Estilos
     classDef blue fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
     classDef yellow fill:#fffde7,stroke:#fbc02d,stroke-width:2px;
     classDef green fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
@@ -65,3 +66,4 @@ graph TD
     class Portal,Servers yellow
     class Monitor,EDR,Logs,SIEM green
     class Auto,Hive,Team red
+```
