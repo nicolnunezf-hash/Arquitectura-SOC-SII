@@ -1,4 +1,5 @@
 # Arquitectura-SOC-SII
+
 graph TD
     %% Nodos Principales
     Internet((INTERNET))
